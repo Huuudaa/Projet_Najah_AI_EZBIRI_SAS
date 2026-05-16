@@ -22,6 +22,7 @@ python backend/app.py
 ```
 
 Ouvrir : **http://localhost:5000**
+<img width="400" height="202" alt="Plateforme_Najah_v6" src="https://github.com/user-attachments/assets/a48c2ee4-bd0e-4a53-bad2-913253e791f9" />
 
 ---
 
