@@ -25,7 +25,8 @@ Ouvrir : **http://localhost:5000**
 
 ## Démo
 ---
-<img width="400" height="202" alt="Plateforme_Najah_v6" src="https://github.com/user-attachments/assets/a48c2ee4-bd0e-4a53-bad2-913253e791f9" />
+<img width="400" height="202" alt="Plateforme_Najah_v6 (1)" src="https://github.com/user-attachments/assets/f18e3734-ae3f-4c97-baa5-aa6f01701e2a" />
+
 ---
 
 ---
