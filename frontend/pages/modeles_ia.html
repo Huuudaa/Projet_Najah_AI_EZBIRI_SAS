@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Najah-AI — Modèles IA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/main.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+.model-badge {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:4px 12px; border-radius:20px;
+  font-size:.72rem; font-weight:600; letter-spacing:.04em;
+}
+.model-online  { background:var(--sage-light); color:var(--sage-dark); }
+.model-offline { background:var(--red-light);  color:var(--red); }
+.feat-bar-wrap { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+.feat-label    { font-size:.78rem; color:var(--text-muted); width:140px; flex-shrink:0; }
+.feat-bar      { flex:1; height:8px; background:var(--border); border-radius:4px; overflow:hidden; }
+.feat-bar-fill { height:100%; border-radius:4px; background:var(--blue); transition:width .6s ease; }
+.feat-val      { font-size:.75rem; color:var(--text-mid); width:36px; text-align:right; }
+.proba-row     { display:flex; align-items:center; justify-content:space-between;
+                 padding:7px 0; border-bottom:1px solid var(--border); }
+.proba-row:last-child { border-bottom:none; }
+.confidence-arc { position:relative; display:inline-block; }
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main">
+    <header class="topbar">
+      <div>
+        <div class="topbar-title">Modèles IA</div>
+        <div class="topbar-sub">Prédiction d'engagement · Détection d'anomalies · Alertes automatiques</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-primary" id="btn-scan" onclick="runScan()">
+          <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0"><polyline points="23 4 23 10 17 10" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg> Lancer l'analyse complète
+        </button>
+      </div>
+    </header>
+
+    <div class="content">
+
+      <!-- Statut modèles -->
+      <div class="grid-3 mb-6" id="model-cards">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
+            <div class="card-title">Classificateur</div>
+            <span class="model-badge model-offline" id="badge-clf">Chargement…</span>
+          </div>
+          <div style="font-size:.82rem;color:var(--text-muted);line-height:1.6">
+            <b>Random Forest</b> — prédit le niveau d'engagement (Engagé / Modéré / À risque)
+          </div>
+          <div style="margin-top:12px">
+            <div class="stat-label">Précision</div>
+            <div class="stat-value" style="font-size:1.6rem" id="clf-acc">—</div>
+          </div>
+        </div>
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
+            <div class="card-title">Régresseur</div>
+            <span class="model-badge model-offline" id="badge-reg">Chargement…</span>
+          </div>
+          <div style="font-size:.82rem;color:var(--text-muted);line-height:1.6">
+            <b>Random Forest</b> — prédit le score d'engagement numérique (0 – 100)
+          </div>
+          <div style="margin-top:12px">
+            <div class="stat-label">Erreur absolue moyenne</div>
+            <div class="stat-value" style="font-size:1.6rem" id="reg-mae">—</div>
+          </div>
+        </div>
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
+            <div class="card-title">Détection d'anomalies</div>
+            <span class="model-badge model-offline" id="badge-iso">Chargement…</span>
+          </div>
+          <div style="font-size:.82rem;color:var(--text-muted);line-height:1.6">
+            <b>Isolation Forest</b> — détecte les comportements atypiques non supervisés
+          </div>
+          <div style="margin-top:12px">
+            <div class="stat-label">Taux d'anomalies détectées</div>
+            <div class="stat-value" style="font-size:1.6rem" id="iso-rate">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-21">
+        <!-- Importance des variables -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Importance des variables</div>
+              <div class="card-sub">Contribution de chaque indicateur à la prédiction</div>
+            </div>
+          </div>
+          <div id="feat-importance"><div class="loading"><span class="spinner"></span></div></div>
+        </div>
+
+        <!-- Prédiction manuelle -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Simulation</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Temps passé (min)</label>
+            <input class="form-control" id="sim-time" type="number" value="60" min="0" max="300">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Interactions</label>
+            <input class="form-control" id="sim-inter" type="number" value="10" min="0" max="50">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Score quiz (%)</label>
+            <input class="form-control" id="sim-quiz" type="number" value="65" min="0" max="100">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Soumissions</label>
+            <input class="form-control" id="sim-sub" type="number" value="2" min="0" max="10">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Connexions / semaine</label>
+            <input class="form-control" id="sim-login" type="number" value="5" min="0" max="14">
+          </div>
+          <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="runSim()">
+            Prédire
+          </button>
+          <div id="sim-result" style="margin-top:14px"></div>
+        </div>
+      </div>
+
+      <!-- Résultats scan + métriques -->
+      <div class="grid-2" id="scan-section" style="display:none">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Résultats de l'analyse ML</div>
+            <div id="scan-badge"></div>
+          </div>
+          <div id="scan-summary"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Distribution prédite</div></div>
+          <canvas id="chartDist" height="180"></canvas>
+        </div>
+      </div>
+
+      <!-- Corrélations -->
+      <div class="card" id="corr-card" style="display:none">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Corrélations features → score d'engagement</div>
+            <div class="card-sub">Valeur de corrélation de Pearson (données actuelles)</div>
+          </div>
+        </div>
+        <canvas id="chartCorr" height="60"></canvas>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="/assets/js/app.js"></script>
+<script>
+let chartDist = null, chartCorr = null;
+
+async function init() {
+  const user = await requireAuth("professeur");
+  if (!user) return;
+  document.getElementById("sidebar").innerHTML = buildSidebar("professeur", "/modeles_ia.html", user);
+  await loadStatus();
+  await loadMetrics();
+}
+
+async function loadStatus() {
+  const d = await apiFetch("/ml/status");
+  if (!d) return;
+  const ready = d.ready;
+  const meta  = d.meta || {};
+
+  ["clf","reg","iso"].forEach(k => {
+    const el = document.getElementById(`badge-${k}`);
+    el.textContent = ready ? "En ligne" : "Hors ligne";
+    el.className   = `model-badge ${ready ? "model-online" : "model-offline"}`;
+  });
+
+  if (ready) {
+    document.getElementById("clf-acc").textContent  = meta.clf_accuracy ? `${(meta.clf_accuracy*100).toFixed(1)}%` : "—";
+    document.getElementById("reg-mae").textContent  = meta.reg_mae      ? `${meta.reg_mae.toFixed(1)} pts` : "—";
+    document.getElementById("iso-rate").textContent = meta.anomaly_rate ? `${(meta.anomaly_rate*100).toFixed(1)}%` : "—";
+
+    const fi = meta.feature_importance || {};
+    const names = { time_spent_min:"Temps passé", interactions:"Interactions",
+                    quiz_score:"Score quiz", submissions:"Soumissions",
+                    logins:"Connexions", week:"Semaine" };
+    const sorted = Object.entries(fi).sort((a,b)=>b[1]-a[1]);
+    const maxVal = sorted[0]?.[1] || 1;
+    document.getElementById("feat-importance").innerHTML = sorted.map(([k,v]) => `
+      <div class="feat-bar-wrap">
+        <div class="feat-label">${names[k]||k}</div>
+        <div class="feat-bar"><div class="feat-bar-fill" style="width:${(v/maxVal*100).toFixed(0)}%"></div></div>
+        <div class="feat-val">${(v*100).toFixed(1)}%</div>
+      </div>`).join("");
+  } else {
+    document.getElementById("feat-importance").innerHTML =
+      `<div class="empty-state">Modèles non disponibles.<br>Lancez : <code>python backend/train_models.py</code></div>`;
+  }
+}
+
+async function loadMetrics() {
+  const d = await apiFetch("/ml/metrics");
+  if (!d || d.error) return;
+  const corr = d.correlations || {};
+  document.getElementById("corr-card").style.display = "block";
+  if (chartCorr) chartCorr.destroy();
+  const labels = Object.keys(corr).map(k =>
+    ({time_spent_min:"Temps passé",interactions:"Interactions",quiz_score:"Score quiz",
+      submissions:"Soumissions",logins:"Connexions"}[k]||k));
+  const vals = Object.values(corr);
+  chartCorr = new Chart(document.getElementById("chartCorr"), {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [{
+        data: vals,
+        backgroundColor: vals.map(v => v >= 0 ? "rgba(159,196,180,.7)" : "rgba(196,105,111,.7)"),
+        borderRadius: 4,
+      }]
+    },
+    options: {
+      responsive:true, indexAxis:"y",
+      plugins:{ legend:{ display:false } },
+      scales:{
+        x:{ grid:{color:"#f0ece6"}, ticks:{font:{size:11},color:"#8A8078"}, min:-1, max:1 },
+        y:{ grid:{display:false}, ticks:{font:{size:11},color:"#8A8078"} }
+      }
+    }
+  });
+}
+
+async function runScan() {
+  const btn = document.getElementById("btn-scan");
+  btn.disabled = true; btn.innerHTML = `<span class="spinner" style="width:13px;height:13px;border-width:1.5px"></span> Analyse en cours…`;
+  const d = await apiPost("/ml/scan", {});
+  btn.disabled = false; btn.innerHTML = `<svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0"><polyline points="23 4 23 10 17 10" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg> Lancer l'analyse complète`;
+  if (!d || d.error) { toast(d?.error || "Erreur lors de l'analyse.", "error"); return; }
+
+  document.getElementById("scan-section").style.display = "grid";
+
+  const sev = d.severity_summary || {};
+  const dist = d.distribution || {};
+  document.getElementById("scan-badge").innerHTML =
+    `<span class="badge badge-sage">${d.students_scanned} étudiants analysés</span>`;
+  document.getElementById("scan-summary").innerHTML = `
+    <div class="stats-grid" style="grid-template-columns:repeat(2,1fr);margin-bottom:0">
+      <div class="stat-card red">
+        <div class="stat-label">Alertes critiques</div>
+        <div class="stat-value">${sev.critique||0}</div>
+      </div>
+      <div class="stat-card amber">
+        <div class="stat-label">Alertes élevées</div>
+        <div class="stat-value">${sev.elevee||0}</div>
+      </div>
+      <div class="stat-card blue">
+        <div class="stat-label">Alertes normales</div>
+        <div class="stat-value">${sev.normale||0}</div>
+      </div>
+      <div class="stat-card sage">
+        <div class="stat-label">Étudiants OK</div>
+        <div class="stat-value">${sev.ok||0}</div>
+      </div>
+    </div>
+    <div style="margin-top:14px;font-size:.78rem;color:var(--text-muted)">
+      ${d.alerts_generated} nouvelle(s) alerte(s) générée(s) — semaine ${d.week_analysed}
+    </div>`;
+
+  if (chartDist) chartDist.destroy();
+  const cd = document.getElementById("chartDist");
+  chartDist = new Chart(cd, {
+    type:"doughnut",
+    data:{ labels:["Engagés","Modérés","À risque"],
+      datasets:[{ data:[dist["Engagé"]||0, dist["Modéré"]||0, dist["À risque"]||0],
+        backgroundColor:["#9FC4B4","#D4A96A","#C4696F"],
+        borderColor:"#fff", borderWidth:3, hoverOffset:4 }]},
+    options:{ responsive:true, cutout:"68%", plugins:{ legend:{ labels:{ font:{size:11}, color:"#8A8078" } } } }
+  });
+
+  toast(`Analyse terminée — ${d.alerts_generated} alerte(s) générée(s).`, "success");
+}
+
+async function runSim() {
+  const features = {
+    time_spent_min: +document.getElementById("sim-time").value,
+    interactions:   +document.getElementById("sim-inter").value,
+    quiz_score:     +document.getElementById("sim-quiz").value,
+    submissions:    +document.getElementById("sim-sub").value,
+    logins:         +document.getElementById("sim-login").value,
+    week: 10,
+  };
+  const r = await apiPost("/ml/predict", features);
+  if (!r || r.error) { toast("Erreur de prédiction.", "error"); return; }
+
+  const color = scoreColor(r.score);
+  const probas = r.probabilities || {};
+  document.getElementById("sim-result").innerHTML = `
+    <div style="background:var(--beige);border-radius:var(--radius);padding:14px;border:1px solid var(--beige-border)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div style="font-family:var(--font-serif);font-size:1.8rem;color:${color}">${r.score}</div>
+        ${labelBadge(r.label)}
+      </div>
+      ${Object.entries(probas).map(([k,v]) => `
+        <div class="proba-row">
+          <span style="font-size:.78rem;color:var(--text-muted)">${k}</span>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="width:80px;height:5px;background:var(--border);border-radius:3px;overflow:hidden">
+              <div style="width:${(v*100).toFixed(0)}%;height:100%;background:var(--blue);border-radius:3px"></div>
+            </div>
+            <span style="font-size:.75rem;font-weight:500;width:36px;text-align:right">${(v*100).toFixed(0)}%</span>
+          </div>
+        </div>`).join("")}
+      <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:.75rem;color:var(--text-muted)">
+        Confiance : <b>${(r.confidence*100).toFixed(0)}%</b> ·
+        Anomalie : <b>${r.anomaly ? "Oui" : "Non"}</b>
+      </div>
+    </div>`;
+}
+
+init();
+</script>
+</body>
+</html>

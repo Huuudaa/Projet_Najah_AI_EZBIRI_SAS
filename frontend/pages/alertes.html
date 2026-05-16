@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Najah-AI — Alertes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/main.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main">
+    <header class="topbar">
+      <div>
+        <div class="topbar-title">Alertes d'engagement</div>
+        <div class="topbar-sub">Étudiants détectés à risque ou en anomalie</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-secondary btn-sm" onclick="load()"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0"><polyline points="23 4 23 10 17 10" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg> Rafraîchir</button>
+      </div>
+    </header>
+    <div class="content">
+      <div class="filter-bar">
+        <select class="form-control" id="fil-sev" onchange="load()">
+          <option value="">Toutes les sévérités</option>
+          <option value="critique">Critique</option>
+          <option value="elevee">Élevée</option>
+        </select>
+        <select class="form-control" id="fil-res" onchange="load()">
+          <option value="">Toutes</option>
+          <option value="0">Non résolues</option>
+          <option value="1">Résolues</option>
+        </select>
+      </div>
+      <div class="card">
+        <div id="loading" class="loading"><span class="spinner"></span> Chargement…</div>
+        <div class="table-wrap" id="table-wrap" style="display:none">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Étudiant</th>
+                <th>Semaine</th>
+                <th>Score</th>
+                <th>Sévérité</th>
+                <th>Message</th>
+                <th>Date</th>
+                <th>Statut</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+        <div id="empty" class="empty-state" style="display:none">Aucune alerte correspondante.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/assets/js/app.js"></script>
+<script>
+async function init() {
+  const user = await requireAuth("professeur");
+  if (!user) return;
+  document.getElementById("sidebar").innerHTML = buildSidebar("professeur", "/alertes.html", user);
+  load();
+}
+
+async function load() {
+  document.getElementById("loading").style.display = "flex";
+  document.getElementById("table-wrap").style.display = "none";
+  document.getElementById("empty").style.display = "none";
+
+  const sev = document.getElementById("fil-sev").value;
+  const res = document.getElementById("fil-res").value;
+  let ep = "/alerts?";
+  if (sev) ep += `severity=${sev}&`;
+  if (res !== "") ep += `resolved=${res}`;
+  const data = await apiFetch(ep);
+
+  document.getElementById("loading").style.display = "none";
+  if (!data || !data.length) { document.getElementById("empty").style.display = "block"; return; }
+
+  document.getElementById("table-wrap").style.display = "block";
+  document.getElementById("tbody").innerHTML = data.map(a => `
+    <tr id="row-${a.alert_id}">
+      <td style="font-size:.75rem;color:var(--text-muted)">${a.alert_id}</td>
+      <td>
+        <a href="/etudiant_detail.html?id=${a.student_id}" style="color:var(--blue-dark);font-weight:500">${a.student_id}</a>
+      </td>
+      <td>Semaine ${a.week}</td>
+      <td><span style="font-weight:600;color:${scoreColor(a.score)}">${a.score}</span></td>
+      <td>${severityBadge(a.severity)}</td>
+      <td style="max-width:220px;font-size:.82rem">${a.message}</td>
+      <td style="font-size:.78rem;color:var(--text-muted)">${a.created_at}</td>
+      <td>${a.resolved ? `<span class="badge badge-sage">Résolue</span>` : `<span class="badge badge-amber">Active</span>`}</td>
+      <td>
+        ${!a.resolved
+          ? `<button class="btn btn-secondary btn-sm" onclick="resolve('${a.alert_id}')"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0"><polyline points="20 6 9 17 4 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg> Résoudre</button>`
+          : `<span style="color:var(--text-light);font-size:.75rem">—</span>`}
+      </td>
+    </tr>`).join("");
+}
+
+async function resolve(id) {
+  const r = await apiPost(`/alerts/${id}/resolve`, {});
+  if (r && r.success) {
+    toast("Alerte marquée comme résolue.", "success");
+    load();
+  } else {
+    toast("Erreur lors de la résolution.", "error");
+  }
+}
+
+init();
+</script>
+</body>
+</html>

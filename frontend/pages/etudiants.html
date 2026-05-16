@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Najah-AI — Étudiants</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/main.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main">
+    <header class="topbar">
+      <div>
+        <div class="topbar-title">Étudiants</div>
+        <div class="topbar-sub">Scores d'engagement de la dernière semaine</div>
+      </div>
+    </header>
+    <div class="content">
+      <div class="card">
+        <div class="filter-bar">
+          <div style="position:relative;flex:1;max-width:280px">
+            <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-muted)"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0"><circle cx="11" cy="11" r="8" stroke-width="1.7"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke-linecap="round" stroke-width="1.7"/></svg></span>
+            <input class="form-control" id="search" placeholder="Rechercher…" oninput="applyFilters()" style="padding-left:32px">
+          </div>
+          <select class="form-control" id="fil-filiere" onchange="applyFilters()">
+            <option value="">Toutes les filières</option>
+            <option>Informatique</option>
+            <option>IA & Data</option>
+            <option>Génie Logiciel</option>
+          </select>
+          <select class="form-control" id="fil-label" onchange="applyFilters()">
+            <option value="">Tous les niveaux</option>
+            <option value="Engagé">Engagés</option>
+            <option value="Modéré">Modérés</option>
+            <option value="À risque">À risque</option>
+          </select>
+          <button class="btn btn-secondary btn-sm" onclick="applyFilters()"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0"><polyline points="23 4 23 10 17 10" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg> Rafraîchir</button>
+        </div>
+        <div class="table-wrap">
+          <table id="table-students">
+            <thead>
+              <tr>
+                <th>Étudiant</th>
+                <th>Filière</th>
+                <th>Année</th>
+                <th>Score</th>
+                <th>Niveau</th>
+                <th>Consentement</th>
+                <th>Anomalie</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+        <div id="loading" class="loading"><span class="spinner"></span> Chargement…</div>
+        <div id="empty" class="empty-state" style="display:none">Aucun étudiant trouvé.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/assets/js/app.js"></script>
+<script>
+let allStudents = [];
+
+async function init() {
+  const user = await requireAuth("professeur");
+  if (!user) return;
+  document.getElementById("sidebar").innerHTML = buildSidebar("professeur", "/etudiants.html", user);
+  await loadStudents();
+}
+
+async function loadStudents() {
+  document.getElementById("loading").style.display = "flex";
+  document.getElementById("tbody").innerHTML = "";
+  const data = await apiFetch("/students");
+  document.getElementById("loading").style.display = "none";
+  allStudents = data || [];
+  applyFilters();
+}
+
+function applyFilters() {
+  const q = document.getElementById("search").value.toLowerCase();
+  const filiere = document.getElementById("fil-filiere").value;
+  const label = document.getElementById("fil-label").value;
+  const filtered = allStudents.filter(s =>
+    (!q || (s.prenom + s.nom + s.email).toLowerCase().includes(q)) &&
+    (!filiere || s.filiere === filiere) &&
+    (!label || s.label === label)
+  );
+  renderTable(filtered);
+}
+
+function renderTable(rows) {
+  const tbody = document.getElementById("tbody");
+  const empty = document.getElementById("empty");
+  if (!rows.length) { tbody.innerHTML = ""; empty.style.display = "block"; return; }
+  empty.style.display = "none";
+  tbody.innerHTML = rows.map(s => `
+    <tr>
+      <td>
+        <div style="font-weight:500;color:var(--text)">${s.prenom} ${s.nom}</div>
+        <div style="font-size:.75rem;color:var(--text-muted)">${s.email}</div>
+      </td>
+      <td>${s.filiere || "—"}</td>
+      <td>A${s.annee || "?"}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-weight:600;color:${scoreColor(s.score)}">${s.score}</span>
+          <div style="width:60px">${progressBar(s.score, s.label==="Engagé"?"sage":s.label==="Modéré"?"amber":"red")}</div>
+        </div>
+      </td>
+      <td>${labelBadge(s.label)}</td>
+      <td>${s.consent ? `<span class="badge badge-sage">Accordé</span>` : `<span class="badge badge-rose">Manquant</span>`}</td>
+      <td>${s.anomaly ? `<span class="badge badge-red">Oui</span>` : `<span class="badge badge-beige">Non</span>`}</td>
+      <td><a href="/etudiant_detail.html?id=${s.student_id}" class="btn btn-secondary btn-sm">Détail</a></td>
+    </tr>`).join("");
+}
+
+init();
+</script>
+</body>
+</html>

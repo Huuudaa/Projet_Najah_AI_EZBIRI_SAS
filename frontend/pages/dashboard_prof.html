@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Najah-AI — Tableau de bord</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/main.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main">
+    <header class="topbar">
+      <div>
+        <div class="topbar-title">Tableau de bord</div>
+        <div class="topbar-sub">Vue générale de l'engagement — semaine en cours</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-secondary btn-sm" onclick="loadAll()"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0"><polyline points="23 4 23 10 17 10" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg> Actualiser</button>
+      </div>
+    </header>
+    <div class="content" id="content">
+      <div class="loading"><span class="spinner"></span> Chargement…</div>
+    </div>
+  </div>
+</div>
+
+<script src="/assets/js/app.js"></script>
+<script>
+let chartLine = null, chartDough = null;
+
+async function init() {
+  const user = await requireAuth("professeur");
+  if (!user) return;
+  document.getElementById("sidebar").innerHTML = buildSidebar("professeur", "/dashboard_prof.html", user);
+  await loadAll();
+}
+
+async function loadAll() {
+  const d = await apiFetch("/dashboard/prof");
+  if (!d || d.error) { document.getElementById("content").innerHTML = `<div class="empty-state">${d?.error || "Erreur de chargement"}</div>`; return; }
+  render(d);
+}
+
+function render(d) {
+  const e = d.engagement || {}, al = d.alertes || {}, eth = d.ethique || {}, evo = d.evolution || [];
+  document.getElementById("content").innerHTML = `
+    <div class="stats-grid">
+      <div class="stat-card blue">
+        <div class="stat-label">Étudiants suivis</div>
+        <div class="stat-value">${e.total || 0}</div>
+        <div class="stat-sub">Semaine ${e.semaine || "—"}</div>
+      </div>
+      <div class="stat-card sage">
+        <div class="stat-label">Engagés</div>
+        <div class="stat-value">${e.engages || 0}</div>
+        <div class="stat-sub">Score ≥ 68</div>
+      </div>
+      <div class="stat-card amber">
+        <div class="stat-label">Modérés</div>
+        <div class="stat-value">${e.moderes || 0}</div>
+        <div class="stat-sub">Score 38 – 67</div>
+      </div>
+      <div class="stat-card red">
+        <div class="stat-label">À risque</div>
+        <div class="stat-value">${e.a_risque || 0}</div>
+        <div class="stat-sub">Score &lt; 38</div>
+      </div>
+      <div class="stat-card rose">
+        <div class="stat-label">Score moyen</div>
+        <div class="stat-value">${e.score_moyen || "—"}</div>
+        <div class="stat-sub">Sur 100</div>
+      </div>
+      <div class="stat-card beige">
+        <div class="stat-label">Alertes actives</div>
+        <div class="stat-value">${al.non_resolues || 0}</div>
+        <div class="stat-sub">${al.critiques || 0} critiques</div>
+      </div>
+    </div>
+
+    <div class="grid-21">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Évolution hebdomadaire</div>
+            <div class="card-sub">Score moyen d'engagement sur les 12 semaines</div>
+          </div>
+        </div>
+        <canvas id="chartLine" height="70"></canvas>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Répartition actuelle</div>
+        </div>
+        <canvas id="chartDough" height="160"></canvas>
+        <div style="display:flex;gap:12px;justify-content:center;margin-top:12px;flex-wrap:wrap">
+          <span style="font-size:.75rem;color:var(--text-muted);display:flex;align-items:center;gap:5px"><span style="width:9px;height:9px;border-radius:50%;background:var(--sage);display:inline-block"></span>Engagés</span>
+          <span style="font-size:.75rem;color:var(--text-muted);display:flex;align-items:center;gap:5px"><span style="width:9px;height:9px;border-radius:50%;background:var(--amber);display:inline-block"></span>Modérés</span>
+          <span style="font-size:.75rem;color:var(--text-muted);display:flex;align-items:center;gap:5px"><span style="width:9px;height:9px;border-radius:50%;background:var(--red);display:inline-block"></span>À risque</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Alertes récentes</div>
+          <a href="/alertes.html" class="btn btn-secondary btn-sm">Voir tout</a>
+        </div>
+        <div id="alerts-list"><div class="loading"><span class="spinner"></span></div></div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Conformité éthique</div>
+          <a href="/consentements.html" class="btn btn-secondary btn-sm">Détails</a>
+        </div>
+        <div style="margin-bottom:16px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+            <span style="font-size:.8rem;color:var(--text-muted)">Taux de consentement</span>
+            <span style="font-size:.8rem;font-weight:600">${eth.taux || 0}%</span>
+          </div>
+          ${progressBar(eth.taux || 0, "sage")}
+        </div>
+        <div style="display:flex;gap:12px;margin-bottom:16px">
+          <div style="flex:1;padding:14px;background:var(--sage-light);border-radius:var(--radius);text-align:center">
+            <div style="font-family:var(--font-serif);font-size:1.6rem;color:var(--sage-dark)">${eth.actifs || 0}</div>
+            <div style="font-size:.72rem;color:var(--text-muted);margin-top:2px">Actifs</div>
+          </div>
+          <div style="flex:1;padding:14px;background:var(--red-light);border-radius:var(--radius);text-align:center">
+            <div style="font-family:var(--font-serif);font-size:1.6rem;color:var(--red)">${(eth.total||0) - (eth.actifs||0)}</div>
+            <div style="font-size:.72rem;color:var(--text-muted);margin-top:2px">Retirés / manquants</div>
+          </div>
+        </div>
+        <a href="/audit.html" class="btn btn-secondary btn-sm" style="width:100%;justify-content:center"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/><line x1="16" y1="13" x2="8" y2="13" stroke-linecap="round" stroke-width="1.7"/><line x1="16" y1="17" x2="8" y2="17" stroke-linecap="round" stroke-width="1.7"/></svg> Journal d'audit</a>
+      </div>
+    </div>`;
+
+  renderCharts(evo, e);
+  loadAlerts();
+}
+
+async function loadAlerts() {
+  const data = await apiFetch("/alerts?resolved=0");
+  const el = document.getElementById("alerts-list");
+  if (!el) return;
+  if (!data || !data.length) { el.innerHTML = `<div class="empty-state">Aucune alerte non résolue</div>`; return; }
+  el.innerHTML = data.slice(0,5).map(a => `
+    <div class="alert-item">
+      <div class="alert-dot ${a.severity}"></div>
+      <div class="alert-body">
+        <div class="alert-title">${a.student_id} — S${a.week}</div>
+        <div class="alert-meta">${a.message} · Score : ${a.score}</div>
+      </div>
+      ${severityBadge(a.severity)}
+    </div>`).join("");
+}
+
+function renderCharts(evo, e) {
+  const labels = evo.map(w => `S${w.week}`);
+  const scores = evo.map(w => w.score_moyen);
+  if (chartLine) chartLine.destroy();
+  const cl = document.getElementById("chartLine");
+  if (cl) chartLine = new Chart(cl, {
+    type: "line",
+    data: { labels, datasets: [{ label: "Score moyen", data: scores,
+      borderColor: "#7BA7C4", backgroundColor: "rgba(123,167,196,.08)",
+      borderWidth: 2, pointRadius: 3, pointBackgroundColor: "#7BA7C4", fill: true, tension: .3 }] },
+    options: { responsive: true, plugins: { legend: { display: false } },
+      scales: { x: { grid: { color: "#f0ece6" }, ticks: { font: { size: 11 }, color: "#8A8078" } },
+                y: { grid: { color: "#f0ece6" }, ticks: { font: { size: 11 }, color: "#8A8078" }, min: 0, max: 100 } } }
+  });
+  if (chartDough) chartDough.destroy();
+  const cd = document.getElementById("chartDough");
+  if (cd) chartDough = new Chart(cd, {
+    type: "doughnut",
+    data: { labels: ["Engagés","Modérés","À risque"],
+      datasets: [{ data: [e.engages||0, e.moderes||0, e.a_risque||0],
+        backgroundColor: ["#9FC4B4","#D4A96A","#C4696F"], borderColor: "#fff", borderWidth: 3, hoverOffset: 4 }] },
+    options: { responsive: true, cutout: "70%", plugins: { legend: { display: false } } }
+  });
+}
+
+init();
+</script>
+</body>
+</html>

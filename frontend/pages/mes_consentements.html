@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Najah-AI — Mes consentements</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/main.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main">
+    <header class="topbar">
+      <div>
+        <div class="topbar-title">Mes consentements</div>
+        <div class="topbar-sub">Gérez l'utilisation de vos données pédagogiques</div>
+      </div>
+    </header>
+    <div class="content">
+      <div class="card mb-6" style="max-width:680px">
+        <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:20px;padding-bottom:18px;border-bottom:1px solid var(--border)">
+          <div style="width:40px;height:40px;border-radius:50%;background:var(--sage-light);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div>
+            <div style="font-weight:600;font-size:.95rem;color:var(--text);margin-bottom:4px">Protection de vos données</div>
+            <p style="font-size:.82rem;color:var(--text-muted);line-height:1.6">
+              Conformément aux principes éthiques du projet NAJAH-AI et au RGPD, vous contrôlez entièrement
+              l'utilisation de vos données pédagogiques. Chaque consentement peut être accordé ou retiré
+              à tout moment. Le retrait d'un consentement n'affecte pas votre accès à la plateforme.
+            </p>
+          </div>
+        </div>
+        <div id="loading" class="loading"><span class="spinner"></span></div>
+        <div id="consent-list"></div>
+      </div>
+
+      <div class="card" style="max-width:680px;background:var(--beige);border-color:var(--beige-border)">
+        <div style="font-size:.8rem;color:var(--text-muted);line-height:1.7">
+          <strong style="color:var(--text)">Vos droits :</strong> droit d'accès, de rectification, d'effacement, de portabilité et d'opposition.
+          Pour toute demande, contactez : <span style="color:var(--blue-dark)">dpo@uca.ma</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/assets/js/app.js"></script>
+<script>
+const TYPES = ["analytics","personalization","data_sharing"];
+let sid, currentConsents = {};
+
+async function init() {
+  const user = await requireAuth("etudiant");
+  if (!user) return;
+  sid = user.user_id;
+  document.getElementById("sidebar").innerHTML = buildSidebar("etudiant", "/mes_consentements.html", user);
+  await loadConsents();
+}
+
+async function loadConsents() {
+  document.getElementById("loading").style.display = "flex";
+  const data = await apiFetch(`/consent/${sid}`);
+  document.getElementById("loading").style.display = "none";
+  currentConsents = data || {};
+  renderConsents();
+}
+
+function renderConsents() {
+  document.getElementById("consent-list").innerHTML = TYPES.map(type => {
+    const v = currentConsents[type] || { given: false, date: null };
+    const checked = v.given ? "checked" : "";
+    return `
+      <div class="consent-row">
+        <div class="consent-info" style="flex:1">
+          <h4>${consentLabel(type)}</h4>
+          <p>${consentDesc(type)}</p>
+          ${v.date ? `<p style="margin-top:3px;font-size:.72rem;color:var(--text-light)">
+            ${v.given ? "Accordé" : "Retiré"} le ${v.date}</p>` : ""}
+        </div>
+        <label class="toggle" style="margin-left:16px">
+          <input type="checkbox" ${checked} onchange="updateConsent('${type}', this.checked)">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>`;
+  }).join("");
+}
+
+async function updateConsent(type, given) {
+  const r = await apiPost(`/consent/${sid}`, { type, given });
+  if (r && r.success) {
+    currentConsents[type] = { given, date: new Date().toISOString().split("T")[0], withdrawn_at: given ? null : new Date().toISOString().split("T")[0] };
+    renderConsents();
+    toast(given ? `Consentement accordé : ${consentLabel(type)}` : `Consentement retiré : ${consentLabel(type)}`, given ? "success" : "error");
+  } else {
+    toast("Erreur lors de la mise à jour.", "error");
+    loadConsents();
+  }
+}
+
+init();
+</script>
+</body>
+</html>

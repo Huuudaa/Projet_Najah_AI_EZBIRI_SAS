@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Najah-AI — Consentements</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/main.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main">
+    <header class="topbar">
+      <div>
+        <div class="topbar-title">Gestion des consentements</div>
+        <div class="topbar-sub">Vue d'ensemble de la conformité éthique des données étudiantes</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-secondary btn-sm" onclick="load()"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0"><polyline points="23 4 23 10 17 10" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg> Actualiser</button>
+      </div>
+    </header>
+    <div class="content">
+      <div class="stats-grid" id="stats-row">
+        <div class="stat-card blue">
+          <div class="stat-label">Étudiants</div>
+          <div class="stat-value" id="stat-total">—</div>
+          <div class="stat-sub">avec données de consentement</div>
+        </div>
+        <div class="stat-card sage">
+          <div class="stat-label">Tout accordé</div>
+          <div class="stat-value" id="stat-all">—</div>
+          <div class="stat-sub">3 consentements actifs</div>
+        </div>
+        <div class="stat-card amber">
+          <div class="stat-label">Partiellement</div>
+          <div class="stat-value" id="stat-partial">—</div>
+          <div class="stat-sub">au moins un actif</div>
+        </div>
+        <div class="stat-card rose">
+          <div class="stat-label">Aucun consentement</div>
+          <div class="stat-value" id="stat-none">—</div>
+          <div class="stat-sub">à contacter</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="filter-bar" style="margin-bottom:16px">
+          <div style="position:relative;flex:1;max-width:260px">
+            <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-muted)"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0"><circle cx="11" cy="11" r="8" stroke-width="1.7"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke-linecap="round" stroke-width="1.7"/></svg></span>
+            <input class="form-control" id="search" placeholder="Rechercher…" oninput="applyFilter()" style="padding-left:32px">
+          </div>
+          <select class="form-control" id="fil" onchange="applyFilter()">
+            <option value="">Tous</option>
+            <option value="all">Tout accordé</option>
+            <option value="partial">Partiel</option>
+            <option value="none">Aucun</option>
+          </select>
+        </div>
+        <div id="loading" class="loading"><span class="spinner"></span></div>
+        <div class="table-wrap" id="tw" style="display:none">
+          <table>
+            <thead>
+              <tr>
+                <th>Étudiant</th>
+                <th>Analyse</th>
+                <th>Personnalisation</th>
+                <th>Partage données</th>
+                <th>Statut global</th>
+              </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+        <div id="empty" class="empty-state" style="display:none">Aucun résultat.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/assets/js/app.js"></script>
+<script>
+let allData = [];
+const TYPES = ["analytics","personalization","data_sharing"];
+const TYPE_LABELS = { analytics: "Analyse", personalization: "Personnalisation", data_sharing: "Partage" };
+
+async function init() {
+  const user = await requireAuth("professeur");
+  if (!user) return;
+  document.getElementById("sidebar").innerHTML = buildSidebar("professeur", "/consentements.html", user);
+  load();
+}
+
+async function load() {
+  document.getElementById("loading").style.display = "flex";
+  document.getElementById("tw").style.display = "none";
+  const data = await apiFetch("/consents");
+  document.getElementById("loading").style.display = "none";
+  allData = data || [];
+
+  const total   = allData.length;
+  const allGiven = allData.filter(s => s.all_given).length;
+  const partial  = allData.filter(s => !s.all_given && s.any_given).length;
+  const none     = allData.filter(s => !s.any_given).length;
+
+  document.getElementById("stat-total").textContent   = total;
+  document.getElementById("stat-all").textContent     = allGiven;
+  document.getElementById("stat-partial").textContent = partial;
+  document.getElementById("stat-none").textContent    = none;
+
+  applyFilter();
+}
+
+function applyFilter() {
+  const q   = document.getElementById("search").value.toLowerCase();
+  const fil = document.getElementById("fil").value;
+  let rows = allData.filter(s => {
+    const match = (!q || (s.prenom+s.nom+s.email).toLowerCase().includes(q));
+    if (!match) return false;
+    if (fil === "all") return s.all_given;
+    if (fil === "partial") return !s.all_given && s.any_given;
+    if (fil === "none") return !s.any_given;
+    return true;
+  });
+  renderTable(rows);
+}
+
+function renderTable(rows) {
+  const tw = document.getElementById("tw"), empty = document.getElementById("empty");
+  if (!rows.length) { tw.style.display = "none"; empty.style.display = "block"; return; }
+  empty.style.display = "none"; tw.style.display = "block";
+  document.getElementById("tbody").innerHTML = rows.map(s => {
+    const cells = TYPES.map(t => {
+      const v = (s.consents || {})[t];
+      if (!v) return `<td><span class="badge badge-beige">—</span></td>`;
+      return `<td>${v.given
+        ? `<span class="badge badge-sage">Accordé<span style="color:var(--sage-dark);font-size:.7rem;margin-left:4px">${v.date||""}</span></span>`
+        : `<span class="badge badge-rose">Retiré</span>`}</td>`;
+    }).join("");
+    const global = s.all_given
+      ? `<span class="badge badge-sage">Complet</span>`
+      : s.any_given
+        ? `<span class="badge badge-amber">Partiel</span>`
+        : `<span class="badge badge-rose">Aucun</span>`;
+    return `<tr>
+      <td>
+        <div style="font-weight:500">${s.prenom} ${s.nom}</div>
+        <div style="font-size:.75rem;color:var(--text-muted)">${s.email}</div>
+      </td>
+      ${cells}
+      <td>${global}</td>
+    </tr>`;
+  }).join("");
+}
+
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{"ts": "2025-09-01T08:00:00", "actor": "system", "action": "INIT", "resource": "platform", "status": "success", "detail": "{}"}
+{"ts": "2026-05-15T18:46:26.640320", "actor": "zineb.achbarou@uca.ma", "action": "LOGIN", "resource": "auth", "status": "success", "detail": "{\"role\": \"professeur\"}"}
+{"ts": "2026-05-15T18:46:26.675038", "actor": "zineb.achbarou@uca.ma", "action": "READ", "resource": "dashboard_prof", "status": "success", "detail": "{}"}
+{"ts": "2026-05-15T18:46:26.678086", "actor": "karim.ouali1@etu.uca.ma", "action": "LOGIN", "resource": "auth", "status": "success", "detail": "{\"role\": \"etudiant\"}"}
+{"ts": "2026-05-15T18:46:26.686245", "actor": "karim.ouali1@etu.uca.ma", "action": "READ", "resource": "dashboard_etudiant", "status": "success", "detail": "{}"}
+{"ts": "2026-05-15T19:04:13.011511", "actor": "zineb.achbarou@uca.ma", "action": "LOGIN", "resource": "auth", "status": "success", "detail": "{\"role\": \"professeur\"}"}
+{"ts": "2026-05-15T19:04:14.492763", "actor": "zineb.achbarou@uca.ma", "action": "ML_PREDICT", "resource": "predict", "status": "success", "detail": "{\"input\": {\"interactions\": 8, \"logins\": 5, \"quiz_score\": 62, \"submissions\": 2, \"time_spent_min\": 45, \"week\": 10}}"}
+{"ts": "2026-05-15T19:04:14.572550", "actor": "zineb.achbarou@uca.ma", "action": "ML_PREDICT", "resource": "student/ETU001", "status": "success", "detail": "{}"}
+{"ts": "2026-05-15T19:04:14.732102", "actor": "zineb.achbarou@uca.ma", "action": "ML_SCAN", "resource": "scan_all", "status": "success", "detail": "{\"week\": 12, \"alerts_generated\": 13}"}
+{"ts": "2026-05-15T19:05:28.531078", "actor": "zineb.achbarou@uca.ma", "action": "LOGIN", "resource": "auth", "status": "success", "detail": "{\"role\": \"professeur\"}"}
+{"ts": "2026-05-15T19:05:29.893054", "actor": "zineb.achbarou@uca.ma", "action": "ML_PREDICT", "resource": "student/ETU001", "status": "success", "detail": "{}"}
+{"ts": "2026-05-15T19:05:29.970319", "actor": "zineb.achbarou@uca.ma", "action": "ML_PREDICT", "resource": "predict", "status": "success", "detail": "{\"input\": {\"interactions\": 3, \"logins\": 2, \"quiz_score\": 40, \"submissions\": 1, \"time_spent_min\": 30, \"week\": 8}}"}
+{"ts": "2026-05-15T19:05:30.131420", "actor": "zineb.achbarou@uca.ma", "action": "ML_SCAN", "resource": "scan_all", "status": "success", "detail": "{\"week\": 12, \"alerts_generated\": 13}"}
+{"ts": "2026-05-15T19:07:12.425636", "actor": "zineb.achbarou@uca.ma", "action": "LOGIN", "resource": "auth", "status": "success", "detail": "{\"role\": \"professeur\"}"}

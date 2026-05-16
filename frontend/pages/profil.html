@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Najah-AI — Mon profil</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/main.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main">
+    <header class="topbar">
+      <div>
+        <div class="topbar-title">Mon profil</div>
+        <div class="topbar-sub">Informations de votre compte</div>
+      </div>
+    </header>
+    <div class="content" id="content">
+      <div class="loading"><span class="spinner"></span> Chargement…</div>
+    </div>
+  </div>
+</div>
+
+<script src="/assets/js/app.js"></script>
+<script>
+async function init() {
+  const user = await requireAuth();
+  if (!user) return;
+  document.getElementById("sidebar").innerHTML = buildSidebar(user.role, "/profil.html", user);
+  render(user);
+}
+
+function render(u) {
+  const initials = ((u.prenom||"?")[0]+(u.nom||"?")[0]).toUpperCase();
+  const roleLabel  = u.role === "professeur" ? "Professeur" : "Étudiant";
+  const roleColor  = u.role === "professeur" ? "badge-blue" : "badge-sage";
+
+  const extraRows = u.role === "professeur"
+    ? `<div class="info-row"><span class="info-key">Spécialité</span><span class="info-val">${u.specialite||"—"}</span></div>
+       <div class="info-row"><span class="info-key">Bureau</span><span class="info-val">${u.bureau||"—"}</span></div>`
+    : `<div class="info-row"><span class="info-key">Filière</span><span class="info-val">${u.filiere||"—"}</span></div>
+       <div class="info-row"><span class="info-key">Année</span><span class="info-val">${u.annee ? "A" + u.annee : "—"}</span></div>`;
+
+  document.getElementById("content").innerHTML = `
+    <div style="max-width:560px">
+      <div class="card mb-6">
+        <div class="profile-header">
+          <div class="profile-avatar-lg">${initials}</div>
+          <div>
+            <div class="profile-name">${u.prenom} ${u.nom}</div>
+            <div class="profile-role">${u.email}</div>
+            <span class="badge ${roleColor}" style="margin-top:6px">${roleLabel}</span>
+          </div>
+        </div>
+
+        <div class="info-row"><span class="info-key">Prénom</span><span class="info-val">${u.prenom||"—"}</span></div>
+        <div class="info-row"><span class="info-key">Nom</span><span class="info-val">${u.nom||"—"}</span></div>
+        <div class="info-row"><span class="info-key">E-mail</span><span class="info-val">${u.email||"—"}</span></div>
+        <div class="info-row"><span class="info-key">Identifiant</span><span class="info-val" style="font-family:monospace;font-size:.82rem">${u.user_id||"—"}</span></div>
+        <div class="info-row"><span class="info-key">Rôle</span><span class="info-val">${roleLabel}</span></div>
+        ${extraRows}
+        <div class="info-row"><span class="info-key">Établissement</span><span class="info-val">UCA / ENSA Marrakech</span></div>
+        <div class="info-row"><span class="info-key">Plateforme</span><span class="info-val">NAJAH-AI · v3.0</span></div>
+
+        <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+          <div style="font-size:.78rem;color:var(--text-muted);margin-bottom:10px">Droits RGPD</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-secondary btn-sm" onclick="exportMyData()">
+              Telecharger mes donnees (Art.20)
+            </button>
+          </div>
+        </div>
+      </div>
+
+      ${u.role === "etudiant" ? `
+      <div class="card">
+        <div class="card-header"><div class="card-title">Actions rapides</div></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <a href="/dashboard_etu.html" class="btn btn-secondary"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0"><rect x="3" y="3" width="7" height="7" rx="1" stroke-width="1.7"/><rect x="14" y="3" width="7" height="7" rx="1" stroke-width="1.7"/><rect x="3" y="14" width="7" height="7" rx="1" stroke-width="1.7"/><rect x="14" y="14" width="7" height="7" rx="1" stroke-width="1.7"/></svg> Tableau de bord</a>
+          <a href="/mon_engagement.html" class="btn btn-secondary"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/></svg> Mon engagement</a>
+          <a href="/mes_consentements.html" class="btn btn-secondary"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Mes consentements</a>
+        </div>
+      </div>` : `
+      <div class="card">
+        <div class="card-header"><div class="card-title">Actions rapides</div></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <a href="/dashboard_prof.html" class="btn btn-secondary"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0"><rect x="3" y="3" width="7" height="7" rx="1" stroke-width="1.7"/><rect x="14" y="3" width="7" height="7" rx="1" stroke-width="1.7"/><rect x="3" y="14" width="7" height="7" rx="1" stroke-width="1.7"/><rect x="14" y="14" width="7" height="7" rx="1" stroke-width="1.7"/></svg> Tableau de bord</a>
+          <a href="/etudiants.html" class="btn btn-secondary"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4" stroke-width="1.7"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg> Étudiants</a>
+          <a href="/alertes.html" class="btn btn-secondary"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg> Alertes</a>
+          <a href="/consentements.html" class="btn btn-secondary"><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Consentements</a>
+        </div>
+      </div>`}
+    </div>`;
+}
+
+
+async function exportMyData() {
+  const d = await apiFetch('/auth/me');
+  if (!d) return;
+  window.location.href = API + '/student/' + d.user_id + '/export';
+}
+
+init();
+</script>
+</body>
+</html>

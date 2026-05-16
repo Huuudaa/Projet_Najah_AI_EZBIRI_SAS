@@ -1,0 +1,7 @@
+course_id,title,prof,filiere,credits
+CS101,Introduction à l IA,PROF001,IA & Data,4
+CS102,Machine Learning,PROF001,IA & Data,5
+CS201,Algorithmique avancée,PROF002,Informatique,4
+CS202,Base de données,PROF002,Informatique,3
+CS301,Génie logiciel,PROF003,Génie Logiciel,4
+CS302,Architecture web,PROF003,Génie Logiciel,3

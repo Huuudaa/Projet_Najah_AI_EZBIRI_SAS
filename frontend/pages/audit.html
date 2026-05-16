@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Najah-AI — Journal d'audit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/main.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main">
+    <header class="topbar">
+      <div>
+        <div class="topbar-title">Journal d'audit</div>
+        <div class="topbar-sub">Traçabilité des accès et actions — 200 dernières entrées</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-secondary btn-sm" onclick="load()"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0"><polyline points="23 4 23 10 17 10" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg> Actualiser</button>
+      </div>
+    </header>
+    <div class="content">
+      <div class="card">
+        <div class="filter-bar" style="margin-bottom:16px">
+          <div style="position:relative;flex:1;max-width:260px">
+            <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-muted)"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0"><circle cx="11" cy="11" r="8" stroke-width="1.7"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke-linecap="round" stroke-width="1.7"/></svg></span>
+            <input class="form-control" id="search" placeholder="Filtrer par acteur, action…" oninput="applyFilter()" style="padding-left:32px">
+          </div>
+          <select class="form-control" id="fil-action" onchange="applyFilter()">
+            <option value="">Toutes les actions</option>
+            <option value="LOGIN">Connexion</option>
+            <option value="LOGOUT">Déconnexion</option>
+            <option value="READ">Lecture</option>
+            <option value="UPDATE">Modification</option>
+            <option value="CONSENT_GIVEN">Consentement accordé</option>
+            <option value="CONSENT_WITHDRAWN">Consentement retiré</option>
+          </select>
+        </div>
+        <div id="loading" class="loading"><span class="spinner"></span></div>
+        <div class="table-wrap" id="tw" style="display:none">
+          <table>
+            <thead>
+              <tr><th>Horodatage</th><th>Acteur</th><th>Action</th><th>Ressource</th><th>Statut</th></tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+        <div id="empty" class="empty-state" style="display:none">Aucune entrée.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/assets/js/app.js"></script>
+<script>
+let allEntries = [];
+
+const actionBadge = a => {
+  const map = {
+    LOGIN: "badge-sage", LOGOUT: "badge-beige",
+    READ: "badge-blue", UPDATE: "badge-amber",
+    CONSENT_GIVEN: "badge-sage", CONSENT_WITHDRAWN: "badge-rose",
+    denied: "badge-red"
+  };
+  return `<span class="badge ${map[a]||'badge-beige'}" style="font-family:monospace">${a}</span>`;
+};
+
+async function init() {
+  const user = await requireAuth("professeur");
+  if (!user) return;
+  document.getElementById("sidebar").innerHTML = buildSidebar("professeur", "/audit.html", user);
+  load();
+}
+
+async function load() {
+  document.getElementById("loading").style.display = "flex";
+  document.getElementById("tw").style.display = "none";
+  const data = await apiFetch("/audit");
+  document.getElementById("loading").style.display = "none";
+  allEntries = data || [];
+  applyFilter();
+}
+
+function applyFilter() {
+  const q = document.getElementById("search").value.toLowerCase();
+  const action = document.getElementById("fil-action").value;
+  const rows = allEntries.filter(e =>
+    (!q || (e.actor||"").toLowerCase().includes(q) || (e.resource||"").toLowerCase().includes(q)) &&
+    (!action || e.action === action)
+  );
+  renderTable(rows);
+}
+
+function renderTable(rows) {
+  const tw = document.getElementById("tw"), empty = document.getElementById("empty");
+  if (!rows.length) { tw.style.display = "none"; empty.style.display = "block"; return; }
+  empty.style.display = "none"; tw.style.display = "block";
+  const statusBadge = s => s === "success"
+    ? `<span class="badge badge-sage">Succès</span>`
+    : `<span class="badge badge-red">Refusé</span>`;
+  document.getElementById("tbody").innerHTML = rows.map(e => {
+    const ts = e.ts ? e.ts.replace("T"," ").substring(0,19) : "—";
+    return `<tr>
+      <td style="font-size:.75rem;font-family:monospace;color:var(--text-muted)">${ts}</td>
+      <td style="font-size:.82rem">${e.actor||"—"}</td>
+      <td>${actionBadge(e.action||"—")}</td>
+      <td style="font-size:.82rem;color:var(--text-muted)">${e.resource||"—"}</td>
+      <td>${statusBadge(e.status)}</td>
+    </tr>`;
+  }).join("");
+}
+
+init();
+</script>
+</body>
+</html>

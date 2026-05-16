@@ -1,0 +1,27 @@
+{
+  "features": [
+    "time_spent_min",
+    "interactions",
+    "quiz_score",
+    "submissions",
+    "logins",
+    "week"
+  ],
+  "classes": [
+    "Engag\u00e9",
+    "Mod\u00e9r\u00e9",
+    "\u00c0 risque"
+  ],
+  "clf_accuracy": 0.5555555555555556,
+  "reg_mae": 12.929534632249288,
+  "anomaly_rate": 0.07083333333333333,
+  "trained_on": 720,
+  "feature_importance": {
+    "time_spent_min": 0.2098,
+    "interactions": 0.1639,
+    "quiz_score": 0.2412,
+    "submissions": 0.097,
+    "logins": 0.1405,
+    "week": 0.1477
+  }
+}

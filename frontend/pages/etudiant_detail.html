@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Najah-AI — Détail étudiant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/main.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main">
+    <header class="topbar">
+      <div style="display:flex;align-items:center;gap:12px">
+        <a href="/etudiants.html" class="btn btn-secondary btn-sm">← Retour</a>
+        <div>
+          <div class="topbar-title" id="page-title">Détail étudiant</div>
+          <div class="topbar-sub" id="page-sub">Profil d'engagement complet</div>
+        </div>
+      </div>
+    </header>
+    <div class="content" id="content">
+      <div class="loading"><span class="spinner"></span> Chargement…</div>
+    </div>
+  </div>
+</div>
+
+<script src="/assets/js/app.js"></script>
+<script>
+let chartEvo = null;
+
+async function init() {
+  const user = await requireAuth("professeur");
+  if (!user) return;
+  document.getElementById("sidebar").innerHTML = buildSidebar("professeur", "/etudiants.html", user);
+  const sid = new URLSearchParams(location.search).get("id");
+  if (!sid) { document.getElementById("content").innerHTML = `<div class="empty-state">Identifiant manquant.</div>`; return; }
+  const d = await apiFetch(`/student/${sid}`);
+  if (!d || d.error) { document.getElementById("content").innerHTML = `<div class="empty-state">${d?.error || "Étudiant introuvable."}</div>`; return; }
+  render(d);
+}
+
+function render(s) {
+  document.getElementById("page-title").textContent = `${s.prenom} ${s.nom}`;
+  document.getElementById("page-sub").textContent   = `${s.email} · ${s.filiere || ""} · Année ${s.annee || "?"}`;
+
+  const evo = s.evolution || [];
+  const last = evo[evo.length - 1] || {};
+  const color = scoreColor(s.score_actuel);
+
+  const consentHtml = Object.entries(s.consents || {}).map(([type, val]) => `
+    <div class="consent-row">
+      <div class="consent-info">
+        <h4>${consentLabel(type)}</h4>
+        <p>${val.date || ""}</p>
+      </div>
+      ${val.given
+        ? `<span class="badge badge-sage">Accordé</span>`
+        : `<span class="badge badge-rose">Retiré${val.withdrawn_at ? ' le ' + val.withdrawn_at : ''}</span>`}
+    </div>`).join("") || `<div class="empty-state">Aucun consentement enregistré.</div>`;
+
+  document.getElementById("content").innerHTML = `
+    <div class="grid-2" style="grid-template-columns:1fr 2fr">
+      <div class="card" style="display:flex;flex-direction:column;align-items:center;gap:14px;justify-content:center;text-align:center">
+        <div style="width:56px;height:56px;border-radius:50%;background:var(--blue-mid);display:flex;align-items:center;justify-content:center;font-family:var(--font-serif);font-size:1.3rem;color:var(--blue-dark)">
+          ${(s.prenom[0]+s.nom[0]).toUpperCase()}
+        </div>
+        <div>
+          <div style="font-family:var(--font-serif);font-size:1.2rem">${s.prenom} ${s.nom}</div>
+          <div style="font-size:.78rem;color:var(--text-muted);margin-top:2px">${s.email}</div>
+        </div>
+        <div style="position:relative;width:100px;height:100px">
+          <svg width="100" height="100" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="42" fill="none" stroke="var(--border)" stroke-width="7"/>
+            <circle cx="50" cy="50" r="42" fill="none" stroke="${color}" stroke-width="7"
+              stroke-dasharray="${2*Math.PI*42}" stroke-dashoffset="${2*Math.PI*42*(1-s.score_actuel/100)}"
+              stroke-linecap="round" transform="rotate(-90 50 50)"/>
+          </svg>
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+            <span style="font-family:var(--font-serif);font-size:1.5rem">${s.score_actuel}</span>
+            <span style="font-size:.65rem;color:var(--text-muted)">/100</span>
+          </div>
+        </div>
+        ${labelBadge(s.label)}
+        ${s.anomaly ? `<span class="badge badge-red">Anomalie détectée</span>` : ""}
+        <div style="width:100%;border-top:1px solid var(--border);padding-top:12px">
+          <div class="info-row"><span class="info-key">Filière</span><span class="info-val">${s.filiere||"—"}</span></div>
+          <div class="info-row"><span class="info-key">Année</span><span class="info-val">A${s.annee||"?"}</span></div>
+          <div class="info-row"><span class="info-key">Temps (sem.)</span><span class="info-val">${last.time||"—"} min</span></div>
+          <div class="info-row"><span class="info-key">Interactions</span><span class="info-val">${last.interactions||"—"}</span></div>
+          <div class="info-row"><span class="info-key">Quiz</span><span class="info-val">${last.quiz||"—"} %</span></div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:20px">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Évolution de l'engagement</div>
+            <div class="card-sub">12 semaines</div>
+          </div>
+          <canvas id="chartEvo" height="80"></canvas>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Consentements</div>
+          </div>
+          ${consentHtml}
+        </div>
+      </div>
+    </div>
+
+    <div class="card mb-6" id="recs-card" style="display:none">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Recommandations pedagogiques</div>
+          <div class="card-sub">Generees automatiquement selon le profil d'engagement</div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="runMLPred()">Analyse ML</button>
+      </div>
+      <div id="recs-list"></div>
+      <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-secondary btn-sm" onclick="exportData()">
+          Telecharger mes donnees (RGPD Art.20)
+        </button>
+        <button class="btn btn-danger btn-sm" onclick="deleteData()">
+          Effacer toutes les donnees (RGPD Art.17)
+        </button>
+      </div>
+    </div>
+    <div class="card mb-6">
+      <div class="card-header"><div class="card-title">Historique détaillé par semaine</div></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Semaine</th><th>Score</th><th>Niveau</th><th>Temps (min)</th><th>Interactions</th><th>Quiz (%)</th><th>Anomalie</th></tr></thead>
+          <tbody>
+            ${evo.map(w => `<tr>
+              <td>Semaine ${w.week}</td>
+              <td><span style="font-weight:600;color:${scoreColor(w.score)}">${w.score}</span></td>
+              <td>${labelBadge(w.label)}</td>
+              <td>${w.time}</td>
+              <td>${w.interactions}</td>
+              <td>${w.quiz}</td>
+              <td>${w.anomaly ? `<span class="badge badge-red">Oui</span>` : `<span class="badge badge-beige">Non</span>`}</td>
+            </tr>`).join("")}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+
+  renderChart(evo);
+  if (s.recommandations) renderRecs(s.recommandations);
+}
+
+function renderChart(evo) {
+  if (chartEvo) chartEvo.destroy();
+  const el = document.getElementById("chartEvo");
+  if (!el) return;
+  chartEvo = new Chart(el, {
+    type: "line",
+    data: {
+      labels: evo.map(w => `S${w.week}`),
+      datasets: [
+        { label: "Score", data: evo.map(w => w.score), borderColor: "#7BA7C4",
+          backgroundColor: "rgba(123,167,196,.08)", borderWidth: 2, pointRadius: 3,
+          fill: true, tension: .3 },
+        { label: "Quiz", data: evo.map(w => w.quiz), borderColor: "#D4A96A",
+          borderWidth: 1.5, pointRadius: 2, borderDash: [4,3], tension: .3, fill: false }
+      ]
+    },
+    options: { responsive: true,
+      plugins: { legend: { labels: { font: { size: 11 }, color: "#8A8078", boxWidth: 12 } } },
+      scales: { x: { grid: { color: "#f0ece6" }, ticks: { font: { size: 11 }, color: "#8A8078" } },
+                y: { grid: { color: "#f0ece6" }, ticks: { font: { size: 11 }, color: "#8A8078" }, min: 0, max: 100 } } }
+  });
+}
+
+
+function renderRecs(recs) {
+  if (!recs || !recs.length) return;
+  document.getElementById('recs-card').style.display = 'block';
+  const labels = {urgent:'Urgent', moyen:'A surveiller', ok:'Satisfaisant'};
+  const badges = {urgent:'badge-red', moyen:'badge-amber', ok:'badge-sage'};
+  document.getElementById('recs-list').innerHTML = recs.map(r =>
+    '<div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">' +
+    '<span class="badge ' + (badges[r.niveau]||'badge-beige') + '" style="flex-shrink:0;white-space:nowrap">' +
+    (labels[r.niveau]||r.niveau) + '</span>' +
+    '<span style="font-size:.85rem;color:var(--text-mid);line-height:1.5">' + r.texte + '</span></div>'
+  ).join('');
+}
+async function runMLPred() {
+  const sid = new URLSearchParams(location.search).get('id');
+  const r = await apiFetch('/ml/predict/student/' + sid);
+  if (!r || r.error) { toast('Modele ML non disponible.', 'error'); return; }
+  toast('Prediction : ' + r.label + ' — Score ' + r.score + ' (confiance ' + Math.round(r.confidence*100) + '%)', r.label === 'A risque' ? 'error' : 'success');
+}
+async function exportData() {
+  const sid = new URLSearchParams(location.search).get('id');
+  window.location.href = API + '/student/' + sid + '/export';
+}
+async function deleteData() {
+  const sid = new URLSearchParams(location.search).get('id');
+  if (!confirm('Supprimer TOUTES les donnees de cet etudiant ? Action irreversible (RGPD Art.17).')) return;
+  const r = await apiFetch('/student/' + sid + '/delete', {method:'DELETE'});
+  if (r && r.success) { toast(r.message, 'success'); setTimeout(()=>{ window.location.href='/etudiants.html'; }, 2000); }
+  else toast('Erreur lors de la suppression.', 'error');
+}
+
+init();
+</script>
+</body>
+</html>

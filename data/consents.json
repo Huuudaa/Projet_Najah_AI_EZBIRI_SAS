@@ -1,0 +1,1022 @@
+{
+  "ETU001": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-27",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-20",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-25",
+      "withdrawn_at": null
+    }
+  },
+  "ETU002": {
+    "analytics": {
+      "given": false,
+      "date": "2025-09-30",
+      "withdrawn_at": "2025-10-03"
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-22",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-01",
+      "withdrawn_at": null
+    }
+  },
+  "ETU003": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-18",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-28",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-20",
+      "withdrawn_at": null
+    }
+  },
+  "ETU004": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-29",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-29",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-09",
+      "withdrawn_at": null
+    }
+  },
+  "ETU005": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-25",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-09",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-25",
+      "withdrawn_at": null
+    }
+  },
+  "ETU006": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-02",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-14",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-18",
+      "withdrawn_at": null
+    }
+  },
+  "ETU007": {
+    "analytics": {
+      "given": false,
+      "date": "2025-09-12",
+      "withdrawn_at": "2025-10-13"
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-25",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-04",
+      "withdrawn_at": null
+    }
+  },
+  "ETU008": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-15",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-01",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": false,
+      "date": "2025-09-07",
+      "withdrawn_at": "2025-10-13"
+    }
+  },
+  "ETU009": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-11",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-28",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-18",
+      "withdrawn_at": null
+    }
+  },
+  "ETU010": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-09",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-20",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-06",
+      "withdrawn_at": null
+    }
+  },
+  "ETU011": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-07",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-25",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-28",
+      "withdrawn_at": null
+    }
+  },
+  "ETU012": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-15",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-05",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-22",
+      "withdrawn_at": null
+    }
+  },
+  "ETU013": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-04",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-26",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-14",
+      "withdrawn_at": null
+    }
+  },
+  "ETU014": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-07",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": false,
+      "date": "2025-10-01",
+      "withdrawn_at": "2025-10-24"
+    },
+    "data_sharing": {
+      "given": false,
+      "date": "2025-09-26",
+      "withdrawn_at": "2025-10-01"
+    }
+  },
+  "ETU015": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-16",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": false,
+      "date": "2025-09-29",
+      "withdrawn_at": "2025-10-28"
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-18",
+      "withdrawn_at": null
+    }
+  },
+  "ETU016": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-26",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-09",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-19",
+      "withdrawn_at": null
+    }
+  },
+  "ETU017": {
+    "analytics": {
+      "given": false,
+      "date": "2025-09-04",
+      "withdrawn_at": "2025-10-23"
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-07",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-16",
+      "withdrawn_at": null
+    }
+  },
+  "ETU018": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-04",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-11",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-12",
+      "withdrawn_at": null
+    }
+  },
+  "ETU019": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-30",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-12",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": false,
+      "date": "2025-09-04",
+      "withdrawn_at": "2025-10-12"
+    }
+  },
+  "ETU020": {
+    "analytics": {
+      "given": true,
+      "date": "2025-10-01",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-19",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-21",
+      "withdrawn_at": null
+    }
+  },
+  "ETU021": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-25",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-11",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-16",
+      "withdrawn_at": null
+    }
+  },
+  "ETU022": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-15",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-13",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-15",
+      "withdrawn_at": null
+    }
+  },
+  "ETU023": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-05",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-21",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-11",
+      "withdrawn_at": null
+    }
+  },
+  "ETU024": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-20",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-28",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-03",
+      "withdrawn_at": null
+    }
+  },
+  "ETU025": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-08",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-21",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-09",
+      "withdrawn_at": null
+    }
+  },
+  "ETU026": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-13",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-15",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-10-01",
+      "withdrawn_at": null
+    }
+  },
+  "ETU027": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-19",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-15",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-06",
+      "withdrawn_at": null
+    }
+  },
+  "ETU028": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-05",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-22",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-24",
+      "withdrawn_at": null
+    }
+  },
+  "ETU029": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-03",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-13",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": false,
+      "date": "2025-09-03",
+      "withdrawn_at": "2025-10-30"
+    }
+  },
+  "ETU030": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-18",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": false,
+      "date": "2025-09-25",
+      "withdrawn_at": "2025-10-13"
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-03",
+      "withdrawn_at": null
+    }
+  },
+  "ETU031": {
+    "analytics": {
+      "given": false,
+      "date": "2025-09-20",
+      "withdrawn_at": "2025-10-05"
+    },
+    "personalization": {
+      "given": false,
+      "date": "2025-09-30",
+      "withdrawn_at": "2025-10-29"
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-08",
+      "withdrawn_at": null
+    }
+  },
+  "ETU032": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-10",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-05",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": false,
+      "date": "2025-09-27",
+      "withdrawn_at": "2025-10-06"
+    }
+  },
+  "ETU033": {
+    "analytics": {
+      "given": false,
+      "date": "2025-09-22",
+      "withdrawn_at": "2025-10-12"
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-11",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-15",
+      "withdrawn_at": null
+    }
+  },
+  "ETU034": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-18",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-18",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-10-01",
+      "withdrawn_at": null
+    }
+  },
+  "ETU035": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-06",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-15",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-21",
+      "withdrawn_at": null
+    }
+  },
+  "ETU036": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-14",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-21",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-30",
+      "withdrawn_at": null
+    }
+  },
+  "ETU037": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-18",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-03",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-12",
+      "withdrawn_at": null
+    }
+  },
+  "ETU038": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-05",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-01",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-25",
+      "withdrawn_at": null
+    }
+  },
+  "ETU039": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-12",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-18",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": false,
+      "date": "2025-09-30",
+      "withdrawn_at": "2025-10-16"
+    }
+  },
+  "ETU040": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-16",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-25",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-10",
+      "withdrawn_at": null
+    }
+  },
+  "ETU041": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-26",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": false,
+      "date": "2025-09-12",
+      "withdrawn_at": "2025-10-07"
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-18",
+      "withdrawn_at": null
+    }
+  },
+  "ETU042": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-08",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-24",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-27",
+      "withdrawn_at": null
+    }
+  },
+  "ETU043": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-09",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": false,
+      "date": "2025-09-21",
+      "withdrawn_at": "2025-10-08"
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-26",
+      "withdrawn_at": null
+    }
+  },
+  "ETU044": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-26",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-09",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-24",
+      "withdrawn_at": null
+    }
+  },
+  "ETU045": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-09",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-28",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": false,
+      "date": "2025-09-05",
+      "withdrawn_at": "2025-10-10"
+    }
+  },
+  "ETU046": {
+    "analytics": {
+      "given": false,
+      "date": "2025-09-15",
+      "withdrawn_at": "2025-10-20"
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-23",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-07",
+      "withdrawn_at": null
+    }
+  },
+  "ETU047": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-05",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": false,
+      "date": "2025-09-18",
+      "withdrawn_at": "2025-10-01"
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-04",
+      "withdrawn_at": null
+    }
+  },
+  "ETU048": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-05",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-24",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": false,
+      "date": "2025-09-03",
+      "withdrawn_at": "2025-10-05"
+    }
+  },
+  "ETU049": {
+    "analytics": {
+      "given": false,
+      "date": "2025-09-07",
+      "withdrawn_at": "2025-10-11"
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-26",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-12",
+      "withdrawn_at": null
+    }
+  },
+  "ETU050": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-26",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": false,
+      "date": "2025-09-03",
+      "withdrawn_at": "2025-10-27"
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-05",
+      "withdrawn_at": null
+    }
+  },
+  "ETU051": {
+    "analytics": {
+      "given": false,
+      "date": "2025-09-25",
+      "withdrawn_at": "2025-10-13"
+    },
+    "personalization": {
+      "given": false,
+      "date": "2025-09-16",
+      "withdrawn_at": "2025-10-06"
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-27",
+      "withdrawn_at": null
+    }
+  },
+  "ETU052": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-13",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-04",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-23",
+      "withdrawn_at": null
+    }
+  },
+  "ETU053": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-25",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-08",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-02",
+      "withdrawn_at": null
+    }
+  },
+  "ETU054": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-24",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-17",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-07",
+      "withdrawn_at": null
+    }
+  },
+  "ETU055": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-22",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-30",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-21",
+      "withdrawn_at": null
+    }
+  },
+  "ETU056": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-24",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-17",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": false,
+      "date": "2025-09-16",
+      "withdrawn_at": "2025-10-21"
+    }
+  },
+  "ETU057": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-12",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-28",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-04",
+      "withdrawn_at": null
+    }
+  },
+  "ETU058": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-14",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-06",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-19",
+      "withdrawn_at": null
+    }
+  },
+  "ETU059": {
+    "analytics": {
+      "given": false,
+      "date": "2025-09-26",
+      "withdrawn_at": "2025-10-08"
+    },
+    "personalization": {
+      "given": false,
+      "date": "2025-09-02",
+      "withdrawn_at": "2025-10-19"
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-16",
+      "withdrawn_at": null
+    }
+  },
+  "ETU060": {
+    "analytics": {
+      "given": true,
+      "date": "2025-09-05",
+      "withdrawn_at": null
+    },
+    "personalization": {
+      "given": true,
+      "date": "2025-09-03",
+      "withdrawn_at": null
+    },
+    "data_sharing": {
+      "given": true,
+      "date": "2025-09-16",
+      "withdrawn_at": null
+    }
+  }
+}

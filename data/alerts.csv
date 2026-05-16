@@ -1,0 +1,78 @@
+alert_id,student_id,week,score,severity,message,created_at,resolved
+ALT0001,ETU009,4,35.5,elevee,Engagement faible — à surveiller,2025-09-29,0
+ALT0002,ETU016,2,36.0,elevee,Engagement faible — à surveiller,2025-09-15,1
+ALT0003,ETU016,3,30.9,elevee,Engagement faible — à surveiller,2025-09-22,0
+ALT0004,ETU016,4,37.2,elevee,Engagement faible — à surveiller,2025-09-29,1
+ALT0005,ETU016,7,31.5,elevee,Engagement faible — à surveiller,2025-10-20,0
+ALT0006,ETU016,8,27.7,elevee,Engagement faible — à surveiller,2025-10-27,0
+ALT0007,ETU016,9,32.7,elevee,Engagement faible — à surveiller,2025-11-03,0
+ALT0008,ETU016,10,20.7,critique,Score critique — intervention urgente,2025-11-10,0
+ALT0009,ETU016,12,27.9,elevee,Engagement faible — à surveiller,2025-11-24,0
+ALT0010,ETU019,2,35.6,elevee,Engagement faible — à surveiller,2025-09-15,0
+ALT0011,ETU019,3,36.0,elevee,Engagement faible — à surveiller,2025-09-22,1
+ALT0012,ETU019,4,32.0,elevee,Engagement faible — à surveiller,2025-09-29,0
+ALT0013,ETU019,6,34.8,elevee,Engagement faible — à surveiller,2025-10-13,1
+ALT0014,ETU019,10,35.2,elevee,Engagement faible — à surveiller,2025-11-10,1
+ALT0015,ETU020,7,34.0,elevee,Engagement faible — à surveiller,2025-10-20,0
+ALT0016,ETU020,10,37.2,elevee,Engagement faible — à surveiller,2025-11-10,0
+ALT0017,ETU020,11,34.8,elevee,Engagement faible — à surveiller,2025-11-17,0
+ALT0018,ETU023,12,35.6,elevee,Engagement faible — à surveiller,2025-11-24,0
+ALT0019,ETU024,2,37.8,elevee,Engagement faible — à surveiller,2025-09-15,1
+ALT0020,ETU024,7,33.8,elevee,Engagement faible — à surveiller,2025-10-20,1
+ALT0021,ETU027,1,30.5,elevee,Engagement faible — à surveiller,2025-09-08,0
+ALT0022,ETU027,2,34.1,elevee,Engagement faible — à surveiller,2025-09-15,1
+ALT0023,ETU027,3,33.6,elevee,Engagement faible — à surveiller,2025-09-22,0
+ALT0024,ETU027,7,31.7,elevee,Engagement faible — à surveiller,2025-10-20,0
+ALT0025,ETU027,8,29.5,elevee,Engagement faible — à surveiller,2025-10-27,0
+ALT0026,ETU027,9,25.5,elevee,Engagement faible — à surveiller,2025-11-03,0
+ALT0027,ETU027,10,22.1,critique,Score critique — intervention urgente,2025-11-10,0
+ALT0028,ETU027,11,34.3,elevee,Engagement faible — à surveiller,2025-11-17,1
+ALT0029,ETU046,8,37.8,elevee,Engagement faible — à surveiller,2025-10-27,1
+ALT0030,ETU046,10,32.3,elevee,Engagement faible — à surveiller,2025-11-10,0
+ALT0031,ETU048,10,33.7,elevee,Engagement faible — à surveiller,2025-11-10,0
+ALT0032,ETU050,2,37.4,elevee,Engagement faible — à surveiller,2025-09-15,1
+ALT0033,ETU050,6,32.4,elevee,Engagement faible — à surveiller,2025-10-13,0
+ALT0034,ETU051,1,34.9,elevee,Engagement faible — à surveiller,2025-09-08,0
+ALT0035,ETU051,2,29.4,elevee,Engagement faible — à surveiller,2025-09-15,0
+ALT0036,ETU051,3,36.5,elevee,Engagement faible — à surveiller,2025-09-22,0
+ALT0037,ETU051,4,32.2,elevee,Engagement faible — à surveiller,2025-09-29,0
+ALT0038,ETU051,5,36.4,elevee,Engagement faible — à surveiller,2025-10-06,1
+ALT0039,ETU051,6,32.7,elevee,Engagement faible — à surveiller,2025-10-13,0
+ALT0040,ETU051,7,37.0,elevee,Engagement faible — à surveiller,2025-10-20,0
+ALT0041,ETU051,8,36.9,elevee,Engagement faible — à surveiller,2025-10-27,1
+ALT0042,ETU051,9,37.5,elevee,Engagement faible — à surveiller,2025-11-03,1
+ALT0043,ETU052,12,34.6,elevee,Engagement faible — à surveiller,2025-11-24,0
+ALT0044,ETU053,6,37.0,elevee,Engagement faible — à surveiller,2025-10-13,0
+ALT0045,ETU058,4,37.6,elevee,Engagement faible — à surveiller,2025-09-29,1
+ALT0046,ETU058,7,35.3,elevee,Engagement faible — à surveiller,2025-10-20,0
+ALT0047,ETU058,11,35.8,elevee,Engagement faible — à surveiller,2025-11-17,0
+ALT0048,ETU059,2,36.8,elevee,Engagement faible — à surveiller,2025-09-15,1
+ALT0049,ETU059,5,29.8,elevee,Engagement faible — à surveiller,2025-10-06,0
+ALT0050,ETU059,6,33.6,elevee,Engagement faible — à surveiller,2025-10-13,0
+ALT0051,ETU059,7,37.0,elevee,Engagement faible — à surveiller,2025-10-20,0
+ALT0052,ETU012,12,79.5,elevee,Engagement faible détecté — suivi pédagogique conseillé (confiance : 67%),2026-05-15,0
+ALT0053,ETU014,12,79.3,elevee,Engagement faible détecté — suivi pédagogique conseillé (confiance : 76%),2026-05-15,0
+ALT0054,ETU017,12,56.2,elevee,Engagement faible détecté — suivi pédagogique conseillé (confiance : 65%),2026-05-15,0
+ALT0055,ETU019,12,62.1,elevee,Engagement faible détecté — suivi pédagogique conseillé (confiance : 65%),2026-05-15,0
+ALT0056,ETU022,12,71.8,elevee,Engagement faible détecté — suivi pédagogique conseillé (confiance : 79%),2026-05-15,0
+ALT0057,ETU026,12,67.8,elevee,Engagement faible détecté — suivi pédagogique conseillé (confiance : 61%),2026-05-15,0
+ALT0058,ETU030,12,60.2,elevee,Engagement faible détecté — suivi pédagogique conseillé (confiance : 55%),2026-05-15,0
+ALT0059,ETU032,12,64.4,elevee,Engagement faible détecté — suivi pédagogique conseillé (confiance : 52%),2026-05-15,0
+ALT0060,ETU045,12,66.4,elevee,Engagement faible détecté — suivi pédagogique conseillé (confiance : 61%),2026-05-15,0
+ALT0061,ETU047,12,68.4,elevee,Engagement faible détecté — suivi pédagogique conseillé (confiance : 55%),2026-05-15,0
+ALT0062,ETU048,12,69.4,elevee,Engagement faible détecté — suivi pédagogique conseillé (confiance : 61%),2026-05-15,0
+ALT0063,ETU051,12,53.5,elevee,Engagement faible détecté — suivi pédagogique conseillé (confiance : 69%),2026-05-15,0
+ALT0064,ETU059,12,51.0,elevee,Engagement faible détecté — suivi pédagogique conseillé (confiance : 54%),2026-05-15,0
+ALT0065,ETU012,12,79.5,elevee,Engagement faible détecté — suivi pédagogique conseillé (confiance : 67%),2026-05-15,0
+ALT0066,ETU014,12,79.3,elevee,Engagement faible détecté — suivi pédagogique conseillé (confiance : 76%),2026-05-15,0
+ALT0067,ETU017,12,56.2,elevee,Engagement faible détecté — suivi pédagogique conseillé (confiance : 65%),2026-05-15,0
+ALT0068,ETU019,12,62.1,elevee,Engagement faible détecté — suivi pédagogique conseillé (confiance : 65%),2026-05-15,0
+ALT0069,ETU022,12,71.8,elevee,Engagement faible détecté — suivi pédagogique conseillé (confiance : 79%),2026-05-15,0
+ALT0070,ETU026,12,67.8,elevee,Engagement faible détecté — suivi pédagogique conseillé (confiance : 61%),2026-05-15,0
+ALT0071,ETU030,12,60.2,elevee,Engagement faible détecté — suivi pédagogique conseillé (confiance : 55%),2026-05-15,0
+ALT0072,ETU032,12,64.4,elevee,Engagement faible détecté — suivi pédagogique conseillé (confiance : 52%),2026-05-15,0
+ALT0073,ETU045,12,66.4,elevee,Engagement faible détecté — suivi pédagogique conseillé (confiance : 61%),2026-05-15,0
+ALT0074,ETU047,12,68.4,elevee,Engagement faible détecté — suivi pédagogique conseillé (confiance : 55%),2026-05-15,0
+ALT0075,ETU048,12,69.4,elevee,Engagement faible détecté — suivi pédagogique conseillé (confiance : 61%),2026-05-15,0
+ALT0076,ETU051,12,53.5,elevee,Engagement faible détecté — suivi pédagogique conseillé (confiance : 69%),2026-05-15,0
+ALT0077,ETU059,12,51.0,elevee,Engagement faible détecté — suivi pédagogique conseillé (confiance : 54%),2026-05-15,0

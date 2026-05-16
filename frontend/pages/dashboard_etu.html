@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Najah-AI — Mon tableau de bord</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/main.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main">
+    <header class="topbar">
+      <div>
+        <div class="topbar-title">Mon tableau de bord</div>
+        <div class="topbar-sub">Suivi de votre engagement pédagogique</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-secondary btn-sm" onclick="loadAll()"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0"><polyline points="23 4 23 10 17 10" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg> Actualiser</button>
+      </div>
+    </header>
+    <div class="content" id="content">
+      <div class="loading"><span class="spinner"></span> Chargement…</div>
+    </div>
+  </div>
+</div>
+
+<script src="/assets/js/app.js"></script>
+<script>
+let chartLine = null;
+
+async function init() {
+  const user = await requireAuth("etudiant");
+  if (!user) return;
+  document.getElementById("sidebar").innerHTML = buildSidebar("etudiant", "/dashboard_etu.html", user);
+  await loadAll();
+}
+
+async function loadAll() {
+  const d = await apiFetch("/dashboard/etudiant");
+  if (!d || d.error) {
+    document.getElementById("content").innerHTML = `<div class="empty-state">${d?.error || "Erreur de chargement"}</div>`;
+    return;
+  }
+  render(d);
+}
+
+function render(d) {
+  const color = scoreColor(d.score_actuel);
+  const evo = d.evolution || [];
+  document.getElementById("content").innerHTML = `
+    <div class="grid-2" style="grid-template-columns:1fr 2fr">
+      <div class="card" style="text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px">
+        <div style="font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:4px">Score d'engagement</div>
+        <div style="position:relative;width:120px;height:120px">
+          <svg width="120" height="120" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="50" fill="none" stroke="var(--border)" stroke-width="8"/>
+            <circle cx="60" cy="60" r="50" fill="none" stroke="${color}" stroke-width="8"
+              stroke-dasharray="${2*Math.PI*50}" stroke-dashoffset="${2*Math.PI*50*(1-d.score_actuel/100)}"
+              stroke-linecap="round" transform="rotate(-90 60 60)" style="transition:stroke-dashoffset .6s ease"/>
+          </svg>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column">
+            <span style="font-family:var(--font-serif);font-size:1.8rem;color:var(--text)">${d.score_actuel}</span>
+            <span style="font-size:.7rem;color:var(--text-muted)">/100</span>
+          </div>
+        </div>
+        ${labelBadge(d.label)}
+        <div style="font-size:.75rem;color:var(--text-muted);margin-top:4px">Semaine ${d.week}</div>
+        ${d.anomaly ? `<div class="badge badge-red" style="margin-top:4px">Anomalie détectée</div>` : ""}
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Évolution de mon engagement</div>
+        </div>
+        <canvas id="chartLine" height="90"></canvas>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card blue">
+        <div class="stat-label">Temps passé</div>
+        <div class="stat-value">${d.time_spent}</div>
+        <div class="stat-sub">min cette semaine</div>
+      </div>
+      <div class="stat-card sage">
+        <div class="stat-label">Interactions</div>
+        <div class="stat-value">${d.interactions}</div>
+        <div class="stat-sub">activités réalisées</div>
+      </div>
+      <div class="stat-card rose">
+        <div class="stat-label">Score quiz</div>
+        <div class="stat-value">${d.quiz_score}</div>
+        <div class="stat-sub">dernière évaluation</div>
+      </div>
+      <div class="stat-card amber">
+        <div class="stat-label">Soumissions</div>
+        <div class="stat-value">${d.submissions}</div>
+        <div class="stat-sub">travaux rendus</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Détail des indicateurs</div>
+        </div>
+        <div class="info-row"><span class="info-key">Niveau d'engagement</span><span class="info-val">${labelBadge(d.label)}</span></div>
+        <div class="info-row"><span class="info-key">Score actuel</span><span class="info-val fw-600">${d.score_actuel} / 100</span></div>
+        <div class="info-row"><span class="info-key">Temps de connexion</span><span class="info-val">${d.time_spent} min</span></div>
+        <div class="info-row"><span class="info-key">Interactions</span><span class="info-val">${d.interactions}</span></div>
+        <div class="info-row"><span class="info-key">Score quiz</span><span class="info-val">${d.quiz_score} %</span></div>
+        <div class="info-row"><span class="info-key">Soumissions</span><span class="info-val">${d.submissions}</span></div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Mes consentements</div>
+          <a href="/mes_consentements.html" class="btn btn-secondary btn-sm">Gérer</a>
+        </div>
+        <p style="font-size:.82rem;color:var(--text-muted);line-height:1.5;margin-bottom:16px">
+          Vos données pédagogiques sont traitées dans le respect de votre vie privée, conformément aux règles éthiques du projet NAJAH-AI.
+        </p>
+        <a href="/mes_consentements.html" class="btn btn-secondary" style="width:100%;justify-content:center">
+          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Voir et modifier mes consentements
+        </a>
+      </div>
+    </div>`;
+
+  renderChart(evo);
+}
+
+function renderChart(evo) {
+  if (chartLine) chartLine.destroy();
+  const el = document.getElementById("chartLine");
+  if (!el) return;
+  chartLine = new Chart(el, {
+    type: "line",
+    data: {
+      labels: evo.map(w => `S${w.week}`),
+      datasets: [{ label: "Score", data: evo.map(w => w.score),
+        borderColor: "#7BA7C4", backgroundColor: "rgba(123,167,196,.08)",
+        borderWidth: 2, pointRadius: 3, fill: true, tension: .3 }]
+    },
+    options: { responsive: true, plugins: { legend: { display: false } },
+      scales: { x: { grid: { color: "#f0ece6" }, ticks: { font: { size: 11 }, color: "#8A8078" } },
+                y: { grid: { color: "#f0ece6" }, ticks: { font: { size: 11 }, color: "#8A8078" }, min: 0, max: 100 } } }
+  });
+}
+
+init();
+</script>
+</body>
+</html>

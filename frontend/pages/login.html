@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Najah-AI — Connexion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/main.css">
+</head>
+<body>
+<div class="login-page">
+  <div class="login-panel">
+    <div class="login-brand">
+      <div class="login-brand-name">Najah-AI</div>
+      <div class="login-divider"></div>
+      <div class="login-brand-tag">Plateforme pédagogique intelligente · UCA / HEEC</div>
+    </div>
+
+    <div class="role-tabs">
+      <button class="role-tab active" id="tab-prof" onclick="setRole('professeur', this)">Professeur</button>
+      <button class="role-tab" id="tab-etu"  onclick="setRole('etudiant', this)">Étudiant</button>
+    </div>
+
+    <div class="error-msg" id="err"></div>
+
+    <div class="form-group">
+      <label class="form-label">Adresse e-mail</label>
+      <input class="form-control" id="email" type="email" placeholder="votre@email.ma" autocomplete="username">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Mot de passe</label>
+      <input class="form-control" id="password" type="password" placeholder="••••••••" autocomplete="current-password">
+    </div>
+
+    <button class="btn-login" id="btn-login" onclick="doLogin()">Se connecter</button>
+
+    <div class="demo-box">
+      <div class="demo-box-title">Comptes de démonstration</div>
+      <div class="demo-row">
+        <span class="demo-label">Professeur</span>
+        <span class="demo-creds">zineb.achbarou@uca.ma / prof12025</span>
+        <button class="demo-fill-btn" onclick="fill('zineb.achbarou@uca.ma','prof12025','professeur')">Remplir</button>
+      </div>
+      <div class="demo-row">
+        <span class="demo-label">Étudiant</span>
+        <span class="demo-creds">karim.ouali1@etu.uca.ma / stu12025</span>
+        <button class="demo-fill-btn" onclick="fill('karim.ouali1@etu.uca.ma','stu12025','etudiant')">Remplir</button>
+      </div>
+    </div>
+
+    <div class="login-footer">Unité mixte AI2S · ENSA Marrakech · 2024 / 2025</div>
+  </div>
+</div>
+
+<script src="/assets/js/app.js"></script>
+<script>
+let selectedRole = "professeur";
+
+function setRole(role, el) {
+  selectedRole = role;
+  document.querySelectorAll(".role-tab").forEach(t => t.classList.remove("active"));
+  el.classList.add("active");
+}
+function fill(email, pwd, role) {
+  document.getElementById("email").value = email;
+  document.getElementById("password").value = pwd;
+  const tab = role === "professeur" ? document.getElementById("tab-prof") : document.getElementById("tab-etu");
+  setRole(role, tab);
+}
+function showErr(msg) {
+  const el = document.getElementById("err");
+  el.textContent = msg; el.classList.add("show");
+}
+async function doLogin() {
+  document.getElementById("err").classList.remove("show");
+  const email    = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const btn      = document.getElementById("btn-login");
+  if (!email || !password) { showErr("Veuillez renseigner votre e-mail et mot de passe."); return; }
+  btn.disabled = true; btn.textContent = "Connexion…";
+  try {
+    const r = await fetch(`${API}/auth/login`, {
+      method: "POST", credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
+    const d = await r.json();
+    if (!r.ok || !d.success) { showErr(d.error || "Identifiants invalides."); return; }
+    // Sauvegarder le token JWT pour toutes les requêtes suivantes
+    if (d.token) localStorage.setItem("najah_token", d.token);
+    localStorage.setItem("najah_user", JSON.stringify({
+      email: d.email, role: d.role, prenom: d.prenom, nom: d.nom, user_id: d.user_id
+    }));
+    window.location.href = d.role === "professeur" ? "/dashboard_prof.html" : "/dashboard_etu.html";
+  } catch(e) { showErr("Impossible de joindre le serveur. Vérifiez que l'API est démarrée."); }
+  finally { btn.disabled = false; btn.textContent = "Se connecter"; }
+}
+document.addEventListener("keydown", e => { if (e.key === "Enter") doLogin(); });
+</script>
+</body>
+</html>
